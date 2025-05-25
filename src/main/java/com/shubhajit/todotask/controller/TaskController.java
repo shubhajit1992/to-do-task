@@ -4,6 +4,7 @@ import com.shubhajit.todotask.model.Task;
 import com.shubhajit.todotask.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -41,9 +43,11 @@ public class TaskController {
     }
 
     @PostMapping
-    public Task createTask(@RequestBody Task task) {
+    public ResponseEntity<Task> createTask(@RequestBody Task task) {
         log.info("Creating new task: {}", task.getTitle());
-        return taskService.saveTask(task);
+        Task created = taskService.saveTask(task);
+        URI location = URI.create(String.format("/api/tasks/%d", created.getId()));
+        return ResponseEntity.created(location).body(created);
     }
 
     @PutMapping("/{id}")
