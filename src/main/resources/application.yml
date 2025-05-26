@@ -1,0 +1,24 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: todotask
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.shubhajit.todotask: DEBUG
+  file:
+    name: logs/todotask.log
