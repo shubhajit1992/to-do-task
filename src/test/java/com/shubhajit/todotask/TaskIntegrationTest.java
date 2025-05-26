@@ -42,7 +42,7 @@ class TaskIntegrationTest {
         task.setCompleted(false);
 
         ResponseEntity<Task> postResponse = restTemplate.postForEntity("/api/tasks", task, Task.class);
-        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         Task created = postResponse.getBody();
         assertThat(created).isNotNull();
         assertThat(created.getId()).isNotNull();
