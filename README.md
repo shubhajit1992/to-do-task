@@ -3,12 +3,12 @@
 A simple Spring Boot RESTful API for managing to-do tasks.
 
 ## Features
-- Create, read, update, and delete (CRUD) tasks
-- Store tasks with title, description, and completion status
-- In-memory H2 database for development and testing
+- CRUD operations for tasks (Create, Read, Update, Delete)
+- Each task has a title, description, and completion status
+- In-memory H2 database for easy development and testing
 - RESTful endpoints for integration with frontends or other services
 - Unit and integration tests
-- Test coverage reporting with JaCoCo
+- Test coverage reporting with JaCoCo (minimum 80% enforced)
 
 ## Requirements
 - Java 21
@@ -20,16 +20,55 @@ A simple Spring Boot RESTful API for managing to-do tasks.
 ```sh
 ./gradlew bootRun
 ```
-The application will start on [http://localhost:8080](http://localhost:8080).
+The application will start at [http://localhost:8080](http://localhost:8080).
 
-### API Endpoints
-- `GET    /api/tasks`           : List all tasks
-- `GET    /api/tasks/{id}`      : Get a task by ID
-- `POST   /api/tasks`           : Create a new task
-- `PUT    /api/tasks/{id}`      : Update an existing task
-- `DELETE /api/tasks/{id}`      : Delete a task
+## API Endpoints
 
-### Example Task JSON
+### Get all tasks
+```
+GET /api/tasks
+```
+Response: 200 OK
+
+### Get a task by ID
+```
+GET /api/tasks/{id}
+```
+Response: 200 OK (if found), 404 Not Found (if not found)
+
+### Create a new task
+```
+POST /api/tasks
+Content-Type: application/json
+
+{
+  "title": "Buy groceries",
+  "description": "Milk, Bread, Eggs, and Fruits",
+  "completed": false
+}
+```
+Response: 201 Created, Location header: /api/tasks/{id}
+
+### Update an existing task
+```
+PUT /api/tasks/{id}
+Content-Type: application/json
+
+{
+  "title": "Buy groceries (updated)",
+  "description": "Milk, Bread, Eggs, Fruits, and Cheese",
+  "completed": true
+}
+```
+Response: 200 OK (if found), 404 Not Found (if not found)
+
+### Delete a task
+```
+DELETE /api/tasks/{id}
+```
+Response: 204 No Content (if found), 404 Not Found (if not found)
+
+## Example Task JSON
 ```json
 {
   "title": "Buy groceries",
@@ -38,12 +77,14 @@ The application will start on [http://localhost:8080](http://localhost:8080).
 }
 ```
 
-### Database
+## Database
 - Uses H2 in-memory database (see `src/main/resources/application.yml`)
-- Sample data is loaded from `src/main/resources/data.sql`
+- Sample data loaded from `src/main/resources/data.sql`
 - H2 Console available at `/h2-console` (if enabled)
 
-### Running Tests
+## Testing
+
+### Run Tests
 ```sh
 ./gradlew test
 ```
@@ -53,11 +94,12 @@ After running tests, open the coverage report:
 ```
 build/jacocoHtml/index.html
 ```
+- Build will fail if code coverage is below 80% (see `build.gradle.kts`)
 
 ## Project Structure
-- `src/main/java`    : Application source code
-- `src/test/java`    : Unit and integration tests
-- `src/main/resources` : Configuration and data files
+- `src/main/java`         : Application source code
+- `src/test/java`         : Unit and integration tests
+- `src/main/resources`    : Configuration and data files
 
 ## License
 This project is for educational/demo purposes.
