@@ -87,7 +87,8 @@ All endpoints accept/return JSON. Example request body for create/update:
 - `src/main/resources` — Configuration and data files
 
 ## API Documentation
-- If you use Swagger/OpenAPI, documentation will be available at `/swagger-ui.html` (add dependency if needed).
+- Swagger UI is available at [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- OpenAPI specification is available at [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
 
 ## License
 This project is for educational/demo purposes. No license is granted for production use.

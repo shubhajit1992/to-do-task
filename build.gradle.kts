@@ -30,6 +30,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("jakarta.validation:jakarta.validation-api:3.0.2")
     implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
+    // --- Swagger/OpenAPI ---
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8")
 
     // --- Compile only ---
     compileOnly("org.projectlombok:lombok")

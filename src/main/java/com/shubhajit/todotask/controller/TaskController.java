@@ -34,6 +34,7 @@ public class TaskController {
 
     /**
      * Get all tasks.
+     *
      * @return list of all TaskDTOs
      */
     @GetMapping
@@ -44,9 +45,9 @@ public class TaskController {
 
     /**
      * Get a task by its ID.
+     *
      * @param id the task ID (must be >= 1)
      * @return the TaskDTO if found
-     * @throws TaskNotFoundException if not found (handled by service layer)
      */
     @GetMapping("/{id}")
     public ResponseEntity<TaskDTO> getTaskById(@PathVariable @Min(1) Long id) {
@@ -57,6 +58,7 @@ public class TaskController {
 
     /**
      * Create a new task.
+     *
      * @param taskDTO the task data
      * @return the created TaskDTO
      */
@@ -70,7 +72,8 @@ public class TaskController {
 
     /**
      * Update an existing task.
-     * @param id the task ID
+     *
+     * @param id      the task ID
      * @param taskDTO the new task data
      * @return the updated TaskDTO
      */
@@ -84,6 +87,7 @@ public class TaskController {
 
     /**
      * Delete a task by its ID.
+     *
      * @param id the task ID
      * @return response entity with no content
      */
