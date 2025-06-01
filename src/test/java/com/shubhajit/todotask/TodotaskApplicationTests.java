@@ -10,4 +10,9 @@ class TodotaskApplicationTests {
 	void contextLoads() {
 	}
 
+	@Test
+	void mainMethodCoverage() {
+		TodotaskApplication.main(new String[]{});
+	}
+
 }

@@ -16,7 +16,7 @@ java {
 
 configurations {
     compileOnly {
-        extendsFrom(configurations.annotationProcessor.get())
+        extendsFrom(annotationProcessor.get())
     }
 }
 
@@ -25,28 +25,39 @@ repositories {
 }
 
 dependencies {
+    // --- Implementation dependencies ---
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("jakarta.validation:jakarta.validation-api:3.0.2")
+    implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
+
+    // --- Compile only ---
     compileOnly("org.projectlombok:lombok")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    runtimeOnly("com.h2database:h2")
     annotationProcessor("org.projectlombok:lombok")
+
+    // --- Development only ---
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+
+    // --- Runtime only ---
+    runtimeOnly("org.postgresql:postgresql")
+
+    // --- Test dependencies ---
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("com.h2database:h2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
-    finalizedBy(tasks.jacocoTestReport) // Generate a report after tests
+    finalizedBy(tasks.jacocoTestReport)
 }
 
 jacoco {
-    toolVersion = "0.8.13" // Use latest stable version
+    toolVersion = "0.8.13"
 }
 
-// Configure the JaCoCo test coverage report
 tasks.jacocoTestReport {
-    dependsOn(tasks.test) // tests are required to run before generating the report
+    dependsOn(tasks.test)
     reports {
         html.required.set(true)
         xml.required.set(false)
