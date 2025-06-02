@@ -99,5 +99,173 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 ## Author
 [[Shubhajit Sahoo](https://github.com/shubhajit1992)]
 
+## Running with Docker and PostgreSQL
+
+### Prerequisites
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
+- [Docker Compose](https://docs.docker.com/compose/) (comes with Docker Desktop)
+
+### Step-by-Step Guide
+
+#### 1. Build the Application JAR
+
+```
+./gradlew clean build -x test
+```
+This creates `build/libs/todotask-0.0.1-SNAPSHOT.jar` for Docker.
+
+#### 2. Start the Database and Application Containers
+
+```
+docker-compose up --build
+```
+- This will build your app image and start both the PostgreSQL database and your Spring Boot app.
+- The database will be available at `localhost:5433` (host) and `db:5432` (inside Docker).
+- The app will be available at `http://localhost:8080`.
+
+#### 3. Verify Containers Are Running
+
+```
+docker-compose ps
+```
+You should see both `db` and `app` services as "Up".
+
+#### 4. Access PostgreSQL Database (Optional)
+
+**A. From your host (if you have `psql` installed):**
+```
+psql -h localhost -p 5433 -U postgres -d todotask
+```
+Password: `postgres`
+
+**B. Or from inside the running container:**
+```
+docker-compose exec db psql -U postgres -d todotask
+```
+
+**C. List tables and query data:**
+```
+\dt
+SELECT * FROM task;
+```
+
+#### 5. How Schema and Data Are Loaded
+- On startup, Spring Boot will execute `src/main/resources/schema.sql` to create the `task` table, then `data.sql` to insert sample data.
+- If you want to change the schema or initial data, edit these files and restart the containers.
+
+#### 6. Test APIs in Insomnia (or Postman)
+- Open Insomnia.
+- Set your API base URL to: `http://localhost:8080`
+- Use the appropriate endpoints (e.g., `GET /api/tasks`, `POST /api/tasks`, etc.).
+- Send requests and view responses.
+
+#### 7. Stopping and Cleaning Up
+- To stop the containers:
+  ```
+  docker-compose down
+  ```
+- To remove all data and start fresh:
+  ```
+  docker-compose down -v
+  ```
+
+#### 8. Manually Executing SQL Queries in Docker (If Schema/Data Does Not Load Automatically)
+If your tables or data do not appear after starting the containers, you can manually execute your SQL scripts inside the running PostgreSQL container:
+
+**A. Copy SQL files into the database container:**
+```sh
+docker cp src/main/resources/schema.sql $(docker-compose ps -q db):/tmp/schema.sql
+docker cp src/main/resources/data.sql $(docker-compose ps -q db):/tmp/data.sql
+```
+
+**B. Connect to the database container:**
+```sh
+docker-compose exec db psql -U postgres -d todotask
+```
+
+**C. Run the SQL scripts inside the psql prompt:**
+```sql
+\i /tmp/schema.sql
+\i /tmp/data.sql
+```
+
+**D. Verify table and data:**
+```sql
+\dt
+SELECT * FROM task;
+```
+
+If you prefer, you can also copy-paste the contents of your SQL files directly into the `psql` prompt.
+
+---
+
+**Troubleshooting:**
+- If tables/data are missing, ensure `schema.sql` and `data.sql` are correct and in `src/main/resources`.
+- If you change the schema/data, use `docker-compose down -v` to reset the database volume.
+- For logs:
+  - App: `docker-compose logs app`
+  - DB: `docker-compose logs db`
+
+---
+
+> **Note:**
+> 
+> When you run `docker-compose down -v`, **all database data is erased** because the Docker volume is deleted. This is standard Docker behavior. To preserve your data, use only `docker-compose down` (without `-v`).
+>
+> - Use `docker-compose down` to stop and remove containers but keep your database data.
+> - Use `docker-compose down -v` only if you want to reset the database and lose all data.
+>
+> For production or persistent development data, always rely on the Docker volume and regular database backups, not on SQL files.
+
+## Security: Managing Secrets and Passwords
+
+**Never hardcode secrets or passwords in your Dockerfile or docker-compose.yml.**
+
+### Recommended Approach: Use a `.env` File
+
+1. **Create a `.env` file in your project root:**
+   ```env
+   POSTGRES_PASSWORD=your_strong_password
+   SPRING_DATASOURCE_PASSWORD=your_strong_password
+   POSTGRES_USER=postgres
+   POSTGRES_DB=todotask
+   SPRING_DATASOURCE_USERNAME=postgres
+   SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/todotask
+   ```
+   - Do **not** commit this file to version control. Add `.env` to your `.gitignore`.
+
+2. **Reference environment variables in `docker-compose.yml`:**
+   ```yaml
+   environment:
+     POSTGRES_DB: ${POSTGRES_DB}
+     POSTGRES_USER: ${POSTGRES_USER}
+     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+     # ...
+     SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+     SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+     SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+   ```
+
+3. **Reference environment variables in `application.yml`:**
+   ```yaml
+   spring:
+     datasource:
+       url: ${SPRING_DATASOURCE_URL}
+       username: ${SPRING_DATASOURCE_USERNAME}
+       password: ${SPRING_DATASOURCE_PASSWORD}
+   ```
+
+4. **Add `.env` to `.gitignore`:**
+   ```
+   .env
+   ```
+
+### Why?
+- Keeps secrets out of source code and version control.
+- Makes it easy to change passwords and other secrets without editing code or config files.
+- Follows industry best practices for local and team development.
+
+For production, consider using Docker secrets, Kubernetes secrets, or a dedicated secrets manager.
+
 ---
 This project is for educational/demo purposes.

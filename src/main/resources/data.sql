@@ -1,11 +1,4 @@
 -- Sample data for Task table
-CREATE TABLE IF NOT EXISTS TASK (
-  ID BIGSERIAL PRIMARY KEY,
-  TITLE VARCHAR(255),
-  DESCRIPTION VARCHAR(255),
-  COMPLETED BOOLEAN
-);
-
 INSERT INTO TASK (TITLE, DESCRIPTION, COMPLETED) VALUES
   ('Buy groceries', 'Milk, Bread, Eggs, and Fruits', FALSE),
   ('Finish project', 'Complete the Spring Boot to-do app', FALSE),

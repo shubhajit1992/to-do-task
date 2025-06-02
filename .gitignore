@@ -32,3 +32,4 @@ build
 
 resources/application.yml
 /logs
+.env
